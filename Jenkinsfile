@@ -70,7 +70,7 @@ pipeline{
             steps {
                 echo 'Creating Infrastructure for the App on AWS Cloud'
                 sh 'terraform init'
-                sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IPS}' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
+                sh "terraform apply --auto-approve -var 'jenkins_private_ip=[\"${env.JENKINS_PRIVATE_IPS.replace(',', '\",\"')}\"]' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
             }
         }
         stage('Create ECR Repo') {
