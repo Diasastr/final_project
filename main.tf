@@ -3,9 +3,12 @@ terraform {
     aws = {
       source  = "hashicorp/aws"
       version = "~> 5.0"
-      region = "eu-north-1"
     }
   }
+}
+
+provider "aws" {
+  region = "eu-north-1"
 }
 
 data "aws_ami" "al2023" {
