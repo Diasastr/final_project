@@ -24,6 +24,9 @@ pipeline{
                     // Set the private IP as an environment variable
                     env.JENKINS_PRIVATE_IP = privateIp
                     echo "PRIVATE IP: ${privateIp}"
+                    def cidrIps = privateIp.split("\\s+").collect { it + "/32" }
+                    env.JENKINS_PRIVATE_IPS = cidrIps.join(",")
+                    echo "CIDR IP's: ${cidrIps}"
                 }
             }
         }
@@ -67,7 +70,7 @@ pipeline{
             steps {
                 echo 'Creating Infrastructure for the App on AWS Cloud'
                 sh 'terraform init'
-                sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IP}' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
+                sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IPS}' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
             }
         }
         stage('Create ECR Repo') {
