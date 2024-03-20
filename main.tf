@@ -32,7 +32,6 @@ data "aws_ami" "al2023" {
 }
 
 variable "jenkins_private_ip" {
-
 }
 
 variable "my_tags" {
@@ -44,6 +43,9 @@ variable "instance_count" {
 }
 
 variable "public_subnet_id" {
+}
+
+variable "vpc_id" {
 
 }
 
@@ -76,6 +78,7 @@ resource "aws_instance" "gitea_instances" {
 
 resource "aws_security_group" "tf_sec_gr" {
   name = "tf-sec-gr-diana"
+  vpc_id = var.vpc_id
 
   # SSH access
   ingress {

@@ -66,7 +66,7 @@ pipeline{
             steps {
                 echo 'Creating Infrastructure for the App on AWS Cloud'
                 sh 'terraform init'
-                sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IP}' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
+                sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IP}' -var 'public_subnet_id=${env.PUBLIC_SUBNET_ID}' -var 'vpc_id=${env.VPC_ID}'"
             }
         }
         stage('Create ECR Repo') {
@@ -160,6 +160,7 @@ pipeline{
 
             echo 'Delete the Image Repository on ECR due to the Failure'
             sh """
+                terraform destroy --auto-approve
                 aws ecr delete-repository \
                 --repository-name ${APP_REPO_NAME} \
                 --region ${AWS_REGION}\
