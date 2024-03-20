@@ -1,0 +1,148 @@
+- name: install docker and config
+  hosts: all
+  become: true
+  vars:
+    aws_region: us-north-1
+    ecr_registry: 345884686771.dkr.ecr.us-north-1.amazonaws.com
+  tasks:
+    - name: update all packages
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+
+    - name: Remove docker if installed from CentOS repo
+      ansible.builtin.yum:
+        name:
+          - docker
+          - docker-client
+          - docker-client-latest
+          - docker-common
+          - docker-latest
+          - docker-latest-logrotate
+          - docker-logrotate
+          - docker-engine
+        state: removed
+
+    - name: Install yum utils
+      ansible.builtin.yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - yum-utils
+        - device-mapper-persistent-data
+        - lvm2
+        - unzip
+
+    - name: Add Docker repo
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/centos/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker
+      ansible.builtin.package:
+        name: docker
+        state: latest
+
+    - name: Add user ec2-user to docker group
+      ansible.builtin.user:
+        name: ec2-user
+        groups: docker
+        append: yes
+
+    - name: Start Docker service
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: install aws cli
+      ansible.builtin.get_url:
+        url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+        dest: /home/ec2-user/awscliv2.zip
+
+    - name: unzip zip file
+      ansible.builtin.unarchive:
+        src: /home/ec2-user/awscliv2.zip
+        dest: /home/ec2-user
+        remote_src: True
+
+    - name: run the installer
+      ansible.builtin.command:
+      args:
+        cmd: "./aws/install"
+        creates: /usr/local/bin/aws
+
+    - name: log in to AWS ec2-user
+      ansible.builtin.shell: |
+        export PATH=/usr/local/bin:$PATH
+        source ~/.bash_profile
+        aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
+
+- name: postgresql database config
+  hosts: postgresql
+  become: true
+  vars:
+    container_name: diana_postgresql
+    image_name: "{{ ecr_registry }}"/diana-repo/final-project:postgresql
+  tasks:
+    - name: remove postgresql container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: remove postgresql image
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        state: absent
+
+    - name: Launch postgresql docker container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}"
+        state: started
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_PASSWORD: "Pp123456789"
+        volumes:
+          - /db-data:/var/lib/postgresql/data
+
+- name: Gitea Server configuration
+  hosts: gitea1; gitea2
+  become: true
+  vars:
+    container_name: diana_gitea
+    image_name: "{{ ecr_registry }}"/diana-repo/final-project:gitea
+  tasks:
+    - name: remove existing gitea container if present
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        force_kill: true
+
+    - name: remove gitea image
+      community.docker.docker_image:
+        name: "{{ image_name }}"
+        state: absent
+
+    - name: Launch Gitea docker container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}"
+        state: started
+        ports:
+          - "3000:3000" # Gitea default port
+          - "22:22"     # If you want to enable SSH for Gitea
+        env:
+          # Set the necessary environment variables for Gitea, e.g.:
+          USER_UID: "1000"
+          USER_GID: "1000"
+          DB_TYPE: "postgres"
+          DB_HOST: "{{ db_host }}"        # The hostname or IP of the PostgreSQL server
+          DB_NAME: "{{ db_name }}"        # The name of the database to use
+          DB_USER: "{{ db_user }}"        # The username for the database
+          DB_PASSWD: "{{ db_password }}"  # The password for the database
+          # You will need to configure Gitea to use the PostgreSQL database here.
+        volumes:
+          - /gitea-data:/data # Adjust the volume path as necessary
