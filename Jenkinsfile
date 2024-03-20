@@ -23,6 +23,7 @@ pipeline{
                     def privateIp = sh(script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text", returnStdout: true).trim()
                     // Set the private IP as an environment variable
                     env.JENKINS_PRIVATE_IP = privateIp
+                    echo "PRIVATE IP: ${privateIp}"
                 }
             }
         }
