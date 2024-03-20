@@ -89,7 +89,7 @@ resource "aws_security_group" "tf_sec_gr" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.jenkins_private_ip]
+    cidr_blocks = var.jenkins_private_ip
   }
 
   # Gitea HTTP/HTTPS access
