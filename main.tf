@@ -125,13 +125,6 @@ resource "aws_security_group" "tf_sec_gr" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    security_groups = [aws_security_group.tf-sec-gr.id] // Allow SSH from same security group controller
-  }
-
   # Egress to allow all outbound traffic
   egress {
     from_port   = 0
@@ -146,11 +139,11 @@ output "gitea_instance_ips" {
 }
 
 output "gitea1_ip" {
-  value = "http://${aws_instance.managed_nodes[1].public_ip}:3000"
+  value = "http://${aws_instance.gitea_instances[1].public_ip}:3000"
 }
 
 output "gitea2_ip" {
-  value = "http://${aws_instance.managed_nodes[2].public_ip}:3000"
+  value = "http://${aws_instance.gitea_instances[2].public_ip}:3000"
 }
 
 output "grafana_ip" {
