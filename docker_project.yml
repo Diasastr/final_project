@@ -135,7 +135,6 @@
           - "3000:3000" # Gitea default port
           - "22:22"     # If you want to enable SSH for Gitea
         env:
-          # Set the necessary environment variables for Gitea, e.g.:
           USER_UID: "1000"
           USER_GID: "1000"
           DB_TYPE: "postgres"
@@ -143,6 +142,5 @@
           DB_NAME: "{{ db_name }}"        # The name of the database to use
           DB_USER: "{{ db_user }}"        # The username for the database
           DB_PASSWD: "{{ db_password }}"  # The password for the database
-          # You will need to configure Gitea to use the PostgreSQL database here.
         volumes:
           - /gitea-data:/data # Adjust the volume path as necessary

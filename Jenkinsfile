@@ -69,8 +69,6 @@ pipeline{
                 sh "terraform apply --auto-approve -var 'jenkins_private_ip=${env.JENKINS_PRIVATE_IP}' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}'"
             }
         }
-
-
         stage('Create ECR Repo') {
             steps {
                 echo 'Creating ECR Repo for App'

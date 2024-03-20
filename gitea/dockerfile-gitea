@@ -1,0 +1,20 @@
+# Use the official Gitea image as a parent image
+FROM gitea/gitea:latest
+
+# Set environment variables
+# GITEA_CUSTOM configuration directory
+ENV GITEA_CUSTOM /data/gitea
+
+# Expose ports for web and SSH access
+EXPOSE 3000 22
+
+# Volume for Gitea data (repositories, etc.)
+VOLUME ["/data"]
+
+# Set the working directory to Gitea's data directory
+WORKDIR /data
+
+# The entrypoint and command to run Gitea
+# These are usually defined in the base image, so you might not need to redefine them
+# ENTRYPOINT ["/usr/bin/entrypoint"]
+# CMD ["/bin/s6-svscan", "/etc/s6"]
