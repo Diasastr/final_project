@@ -63,7 +63,6 @@ resource "aws_instance" "gitea_instances" {
   instance_type   = "t2.micro"
   key_name        = "jenkins-key-pair"  # Replace with your key pair name
   vpc_security_group_ids = [aws_security_group.tf_sec_gr.id]
-  iam_instance_profile = "jenkins_instance_profile" # Adjust with your IAM instance profile
 
   tags = {
     Name = element(var.my_tags, count.index)
