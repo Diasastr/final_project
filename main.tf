@@ -33,6 +33,7 @@ data "aws_ami" "al2023" {
 
 variable "jenkins_private_ip" {
   type = list(string)
+  default = [0.0.0.0/32]
 }
 
 variable "my_tags" {
@@ -44,10 +45,11 @@ variable "instance_count" {
 }
 
 variable "public_subnet_id" {
+  default = "public-1"
 }
 
 variable "vpc_id" {
-
+  default = "vpc-diana"
 }
 
 variable "instance_connect_ssh_cidr" {
