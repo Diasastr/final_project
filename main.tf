@@ -60,7 +60,7 @@ resource "aws_instance" "gitea_instances" {
   ami             = "ami-079ae45378903f993"
   count           = var.instance_count
   subnet_id       = var.public_subnet_id
-  instance_type   = "t2.micro"
+  instance_type   = "t3.small"
   key_name        = "jenkins-key-pair"  # Replace with your key pair name
   vpc_security_group_ids = [aws_security_group.tf_sec_gr.id]
 
