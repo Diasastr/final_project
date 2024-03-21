@@ -33,7 +33,7 @@ data "aws_ami" "al2023" {
 
 variable "jenkins_private_ip" {
   type = list(string)
-  default = [0.0.0.0/32]
+  default = ["0.0.0.0/32"]
 }
 
 variable "my_tags" {
