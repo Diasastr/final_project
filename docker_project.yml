@@ -133,7 +133,6 @@
         state: started
         ports:
           - "3000:3000" # Gitea default port
-          - "22:22"     # If you want to enable SSH for Gitea
         env:
           USER_UID: "1000"
           USER_GID: "1000"
