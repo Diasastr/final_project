@@ -140,8 +140,13 @@ pipeline{
                 sh 'ls -l'
                 sh 'ansible --version'
                 sh 'ansible-inventory --graph'
-                ansiblePlaybook credentialsId: 'jenkins-private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory_aws_ec2.yml', playbook: 'docker_project.yml'
-             }
+                ansiblePlaybook credentialsId: 'jenkins-private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory_aws_ec2.yml', playbook: 'docker_project.yml',
+                    extraVars: [
+                        db_host: "${env.DB_HOST}",
+                        db_name: "${env.DB_NAME}",
+                        db_user: "${env.DB_USER}"
+                    ]
+            }
         }
         stage('Destroy the infrastructure'){
             steps{

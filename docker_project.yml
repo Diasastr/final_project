@@ -104,8 +104,6 @@
         state: started
         ports:
           - "5432:5432"
-        env:
-          POSTGRES_PASSWORD: "Pp123456789"
         volumes:
           - /db-data:/var/lib/postgresql/data
 
@@ -141,8 +139,8 @@
           USER_GID: "1000"
           DB_TYPE: "postgres"
           DB_HOST: "{{ db_host }}"        # The hostname or IP of the PostgreSQL server
-          DB_NAME: "{{ db_name }}"        # The name of the database to use
-          DB_USER: "{{ db_user }}"        # The username for the database
-          DB_PASSWD: "{{ db_password }}"  # The password for the database
+          DB_NAME: "gitea"        # The name of the database to use
+          DB_USER: "gitea"        # The username for the database
+          DB_PASSWD: "GiteaUserPassword457"  # The password for the database
         volumes:
           - /gitea-data:/data # Adjust the volume path as necessary

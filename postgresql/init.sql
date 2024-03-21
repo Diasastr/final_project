@@ -1,8 +1,3 @@
-CREATE DATABASE clarustodo;
-
-\c clarustodo;
-
-CREATE TABLE todo(
-    todo_id SERIAL PRIMARY KEY,
-    description VARCHAR(255)
-);
+CREATE USER gitea WITH PASSWORD 'GiteaUserPassword457';
+CREATE DATABASE gitea;
+GRANT ALL PRIVILEGES ON DATABASE gitea TO gitea;
