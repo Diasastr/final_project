@@ -2,8 +2,8 @@
   hosts: all
   become: true
   vars:
-    aws_region: us-north-1
-    ecr_registry: 345884686771.dkr.ecr.us-north-1.amazonaws.com
+    aws_region: eu-north-1
+    ecr_registry: 345884686771.dkr.ecr.eu-north-1.amazonaws.com
   tasks:
     - name: update all packages
       ansible.builtin.yum:
