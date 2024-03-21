@@ -70,6 +70,7 @@ resource "aws_instance" "gitea_instances" {
   instance_type   = "t3.small"
   key_name        = "jenkins-key-pair"  # Replace with your key pair name
   vpc_security_group_ids = [aws_security_group.tf_sec_gr.id]
+  iam_instance_profile = aws_iam_instance_profile.ec2_ecr_profile.name
 
   tags = {
     Name = element(var.my_tags, count.index)
@@ -82,6 +83,68 @@ resource "aws_instance" "gitea_instances" {
                 sudo yum update -y
                 EOF
 }
+
+
+resource "aws_iam_policy" "ecr_access_policy" {
+  name        = "ECRAccessPolicy"
+  description = "Policy for allowing access to ECR"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = [
+          "ecr:GetAuthorizationToken",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:GetDownloadUrlForLayer",
+          "ecr:GetRepositoryPolicy",
+          "ecr:DescribeRepositories",
+          "ecr:ListImages",
+          "ecr:DescribeImages",
+          "ecr:BatchGetImage",
+          "ecr:GetLifecyclePolicy",
+          "ecr:GetLifecyclePolicyPreview",
+          "ecr:ListTagsForResource",
+          "ecr:DescribeImageScanFindings",
+          "ecr:InitiateLayerUpload",
+          "ecr:UploadLayerPart",
+          "ecr:CompleteLayerUpload",
+          "ecr:PutImage",
+        ]
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role" "ec2_ecr_role" {
+  name = "EC2ECRRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecr_access_policy_attachment" {
+  role       = aws_iam_role.ec2_ecr_role.name
+  policy_arn = aws_iam_policy.ecr_access_policy.arn
+}
+
+resource "aws_iam_instance_profile" "ec2_ecr_profile" {
+  name = "EC2ECRInstanceProfile"
+  role = aws_iam_role.ec2_ecr_role.name
+}
+
 
 resource "aws_security_group" "tf_sec_gr" {
   name = "tf-sec-gr-diana"

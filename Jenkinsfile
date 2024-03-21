@@ -26,7 +26,7 @@ pipeline{
                     env.JENKINS_PRIVATE_IP = privateIp
                     echo "PRIVATE IP: ${privateIp}"
                     env.JENKINS_PUBLIC_IP = publicIp
-                    echo "PUBLIC IP: ${privateIp}"
+                    echo "PUBLIC IP: ${publicIp}"
                     def cidrIps = privateIp.split("\\s+").collect { it + "/32" }
                     env.JENKINS_PRIVATE_IPS = cidrIps.join(",")
                     echo "CIDR IP's: ${cidrIps}"
