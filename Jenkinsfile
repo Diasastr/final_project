@@ -91,8 +91,8 @@ pipeline{
             steps {
                 echo 'Building App Image'
                 script {
-                    env.GITEA1_IP = sh(script: 'terraform output -raw gitea1_public_ip', returnStdout:true).trim()
-                    env.GITEA2_IP = sh(script: 'terraform output -raw gitea2_public_ip', returnStdout:true).trim()
+                    env.GITEA1_IP = sh(script: 'terraform output -raw gitea1_ip', returnStdout:true).trim()
+                    env.GITEA2_IP = sh(script: 'terraform output -raw gitea2_ip', returnStdout:true).trim()
                     env.DB_HOST = sh(script: 'terraform output -raw postgresql_private_ip', returnStdout:true).trim()
                     env.DB_NAME = sh(script: 'aws --region=eu-north-1 ssm get-parameters --names "gitea_db_name" --with-decryption --query "Parameters[*].{Value:Value}" --output text', returnStdout:true).trim()
                     env.DB_USER = sh(script: 'aws --region=eu-north-1 ssm get-parameters --names "gitea_db_user" --with-decryption --query "Parameters[*].{Value:Value}" --output text', returnStdout:true).trim()
