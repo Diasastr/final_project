@@ -3,7 +3,7 @@
   become: true
   vars:
     aws_region: eu-north-1
-    ecr_registry: 345884686771.dkr.ecr.eu-north-1.amazonaws.com
+    ecr_registry: "345884686771.dkr.ecr.eu-north-1.amazonaws.com"
   tasks:
     - name: update all packages
       ansible.builtin.yum:
@@ -83,6 +83,7 @@
   become: true
   vars:
     container_name: diana_postgresql
+    ecr_registry: "345884686771.dkr.ecr.eu-north-1.amazonaws.com"
     image_name: "{{ ecr_registry }}/diana-repo/final-project:postgresql"
   tasks:
     - name: remove postgresql container
@@ -113,6 +114,7 @@
   become: true
   vars:
     container_name: diana_gitea
+    ecr_registry: "345884686771.dkr.ecr.eu-north-1.amazonaws.com"
     image_name: "{{ ecr_registry }}/diana-repo/final-project:gitea"
   tasks:
     - name: remove existing gitea container if present
