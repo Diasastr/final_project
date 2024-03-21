@@ -83,7 +83,7 @@
   become: true
   vars:
     container_name: diana_postgresql
-    image_name: "{{ ecr_registry }}"/diana-repo/final-project:postgresql
+    image_name: "{{ ecr_registry }}/diana-repo/final-project:postgresql"
   tasks:
     - name: remove postgresql container
       community.docker.docker_container:
@@ -113,7 +113,7 @@
   become: true
   vars:
     container_name: diana_gitea
-    image_name: "{{ ecr_registry }}"/diana-repo/final-project:gitea
+    image_name: "{{ ecr_registry }}/diana-repo/final-project:gitea"
   tasks:
     - name: remove existing gitea container if present
       community.docker.docker_container:
