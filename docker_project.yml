@@ -84,7 +84,7 @@
   vars:
     container_name: diana_postgresql
     ecr_registry: "345884686771.dkr.ecr.eu-north-1.amazonaws.com"
-    image_name: "{{ ecr_registry }}/diana-repo/final-project:postgresql"
+    image_name: "{{ ecr_registry }}/diana-repo/final-project:postgres"
   tasks:
     - name: remove postgresql container
       community.docker.docker_container:
