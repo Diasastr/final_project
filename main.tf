@@ -57,7 +57,7 @@ variable "instance_connect_ssh_cidr" {
 }
 
 resource "aws_instance" "gitea_instances" {
-  ami             = data.aws_ami.al2023.id
+  ami             = "ami-079ae45378903f993"
   count           = var.instance_count
   subnet_id       = var.public_subnet_id
   instance_type   = "t2.micro"
