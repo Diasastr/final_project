@@ -79,7 +79,7 @@
         aws ecr get-login-password --region {{ aws_region }} | docker login --username AWS --password-stdin {{ ecr_registry }}
 
 - name: postgresql database config
-  hosts: postgresql
+  hosts: _postgresql
   become: true
   vars:
     container_name: diana_postgresql
@@ -109,7 +109,7 @@
           - /db-data:/var/lib/postgresql/data
 
 - name: Gitea Server configuration
-  hosts: gitea1; gitea2
+  hosts: _gitea1:_gitea2
   become: true
   vars:
     container_name: diana_gitea
