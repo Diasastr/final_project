@@ -21,12 +21,18 @@ pipeline{
                     def instanceId = sh(script: "curl http://169.254.169.254/latest/meta-data/instance-id", returnStdout: true).trim()
                     // Retrieve the private IP address of the current instance
                     def privateIp = sh(script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[*].Instances[*].PrivateIpAddress' --output text", returnStdout: true).trim()
+                    def publicIp = sh(script: "aws ec2 describe-instances --instance-ids ${instanceId} --query 'Reservations[*].Instances[*].PublicIpAddress' --output text", returnStdout: true).trim()
                     // Set the private IP as an environment variable
                     env.JENKINS_PRIVATE_IP = privateIp
                     echo "PRIVATE IP: ${privateIp}"
+                    env.JENKINS_PUBLIC_IP = publicIp
+                    echo "PUBLIC IP: ${privateIp}"
                     def cidrIps = privateIp.split("\\s+").collect { it + "/32" }
                     env.JENKINS_PRIVATE_IPS = cidrIps.join(",")
                     echo "CIDR IP's: ${cidrIps}"
+                    def cidrPublicIps = publicIp.split("\\s+").collect { it + "/32" }
+                    env.JENKINS_PUBLIC_IPS = cidrPublicIps.join(",")
+                    echo "CIDR PUBLIC IP's: ${cidrPublicIps}"
                 }
             }
         }
@@ -70,7 +76,7 @@ pipeline{
             steps {
                 echo 'Creating Infrastructure for the App on AWS Cloud'
                 sh 'terraform init'
-                sh "terraform apply --auto-approve -var 'jenkins_private_ip=[\"${env.JENKINS_PRIVATE_IPS.replace(',', '\",\"')}\"]' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}' -var 'vpc_id=${env.VPC_ID}'"
+                sh "terraform apply --auto-approve -var 'jenkins_private_ip=[\"${env.JENKINS_PRIVATE_IPS.replace(',', '\",\"')}\"]' -var 'jenkins_public_ip=[\"${env.JENKINS_PUBLIC_IPS.replace(',', '\",\"')}\"]' -var 'public_subnet_id=${ env.PUBLIC_SUBNET_ID}' -var 'vpc_id=${env.VPC_ID}'"
             }
         }
         stage('Create ECR Repo') {

@@ -36,6 +36,11 @@ variable "jenkins_private_ip" {
   default = ["0.0.0.0/32"]
 }
 
+variable "jenkins_public_ip" {
+  type = list(string)
+  default = ["0.0.0.0/32"]
+}
+
 variable "my_tags" {
   default = ["postgresql", "gitea1", "gitea2", "monitoring"]
 }
@@ -95,6 +100,13 @@ resource "aws_security_group" "tf_sec_gr" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = var.jenkins_private_ip
+  }
+
+   ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = var.jenkins_public_ip
   }
 
   # Gitea HTTP/HTTPS access
